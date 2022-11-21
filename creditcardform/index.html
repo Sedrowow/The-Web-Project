@@ -1,3 +1,8 @@
+  <html>
+  <header>
+	<title>"PAY" FOR INFO!</title>
+  </header>
+  
   <div class="wrapper" id="app">
     <div class="card-form">
       <div class="card-list">
@@ -64,7 +69,7 @@
               </label>
               <div class="card-item__content">
                 <label for="cardName" class="card-item__info" ref="cardName">
-                  <div class="card-item__holder">Card Holder</div>
+                  <div class="card-item__holder">Card Name</div>
                   <transition name="slide-fade-up">
                     <div class="card-item__name" v-if="cardName.length" key="1">
                       <transition-group name="slide-fade-right">
@@ -75,7 +80,7 @@
                   </transition>
                 </label>
                 <div class="card-item__date" ref="cardDate">
-                  <label for="cardMonth" class="card-item__dateTitle">Expires</label>
+                  <label for="cardMonth" class="card-item__dateTitle">DateOfsign</label>
                   <label for="cardMonth" class="card-item__dateItem">
                     <transition name="slide-fade-up">
                       <span v-if="cardMonth" v-bind:key="cardMonth">{{cardMonth}}</span>
@@ -100,7 +105,7 @@
             </div>
             <div class="card-item__band"></div>
             <div class="card-item__cvv">
-                <div class="card-item__cvvTitle">CVV</div>
+                <div class="card-item__cvvTitle">FAV</div>
                 <div class="card-item__cvvBand">
                   <span v-for="(n, $index) in cardCvv" :key="$index">
                     *
@@ -116,17 +121,17 @@
       </div>
       <div class="card-form__inner">
         <div class="card-input">
-          <label for="cardNumber" class="card-input__label">Card Number</label>
+          <label for="cardNumber" class="card-input__label">NO REAL Card Number</label>
           <input type="text" id="cardNumber" class="card-input__input" v-mask="generateCardNumberMask" v-model="cardNumber" v-on:focus="focusInput" v-on:blur="blurInput" data-ref="cardNumber" autocomplete="off">
         </div>
         <div class="card-input">
-          <label for="cardName" class="card-input__label">Card Holders</label>
+          <label for="cardName" class="card-input__label">Card name</label>
           <input type="text" id="cardName" class="card-input__input" v-model="cardName" v-on:focus="focusInput" v-on:blur="blurInput" data-ref="cardName" autocomplete="off">
         </div>
         <div class="card-form__row">
           <div class="card-form__col">
             <div class="card-form__group">
-              <label for="cardMonth" class="card-input__label">Expiration Date</label>
+              <label for="cardMonth" class="card-input__label">SIGNING DATE</label>
               <select class="card-input__input -select" id="cardMonth" v-model="cardMonth" v-on:focus="focusInput" v-on:blur="blurInput" data-ref="cardDate">
                 <option value="" disabled selected>Month</option>
                 <option v-bind:value="n < 10 ? '0' + n : n" v-for="n in 12" v-bind:disabled="n < minCardMonth" v-bind:key="n">
@@ -143,19 +148,17 @@
           </div>
           <div class="card-form__col -cvv">
             <div class="card-input">
-              <label for="cardCvv" class="card-input__label">CVV</label>
+              <label for="cardCvv" class="card-input__label">FAVNO</label>
               <input type="text" class="card-input__input" id="cardCvv" v-mask="'####'" maxlength="4" v-model="cardCvv" v-on:focus="flipCard(true)" v-on:blur="flipCard(false)" autocomplete="off">
             </div>
           </div>
         </div>
 
         <button class="card-form__button">
-          Submit
+          PAY with BLOOD
         </button>
       </div>
     </div>
-    
-    <a href="https://github.com/muhammederdem/credit-card-form" target="_blank" class="github-btn">
-      See on GitHub
-    </a>
+	
   </div>
+</html>
