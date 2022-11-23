@@ -1,81 +1,35 @@
-let $stage = $('.stage')
-let $flyer = $('.flyer')
+const timeElm = document.getElementById('time');
+const doc = document.documentElement;
+const { clientWidth, clientHeight } = doc;
 
-const BASEPERSPECTIVE = 180
-const BASEEASING = 10
-const MAXDEGREE = 360
+const pad = (val) => val < 10 ? `0${val}` : val;
 
-let rotation = { current: 0, final: 0 }
-let perspective = { current: BASEPERSPECTIVE, final: BASEPERSPECTIVE }
-let zoom = { current: 1, final: 1 }
-let easing = BASEEASING
+const time$ = Rx.Observable
+  .interval(1000)
+  .map(() => {
+    const time = new Date();
+    
+    return {      
+      hours: time.getHours(),
+      minutes: time.getMinutes(),
+      seconds: time.getSeconds(),
+    };
+  })
+  .subscribe(({ hours, minutes, seconds}) => {
+    timeElm.setAttribute('data-hours', pad(hours));
+    timeElm.setAttribute('data-minutes', pad(minutes));
+    timeElm.setAttribute('data-seconds', pad(seconds));
+  });
 
-let ease = val => val.current += (val.final - val.current ) / easing
-let round = val => Math.round(val * 1000) / 1000
-let finished = val => round(val.current) === round(val.final)
+const mouse$ = Rx.Observable
+  .fromEvent(document, 'mousemove')
+  .map(({clientX, clientY}) => ({
+    x: (clientWidth / 2 - clientX) / clientWidth,
+    y: (clientHeight / 2 - clientY) / clientHeight,
+  }));
 
-let animation = {
-    _isPlaying: false,
-    play() {
-        !this._isPlaying && this._animate()
-    },
-    _animate() {
-        this._isPlaying = true
-
-        ease(rotation)
-        ease(perspective)
-        ease(zoom)
-
-        $flyer.style.transform = `rotateY(-${ rotation.current }deg)`
-        $stage.style.perspectiveOrigin = `center ${ perspective.current }px`
-        $stage.style.transform = `scale(${ zoom.current })`
-
-        if (finished(rotation)
-        &&  finished(perspective)
-        &&  finished(zoom)) {
-            this._isPlaying = false
-            return
-        }
-
-        requestAnimationFrame(this._animate.bind(this))
-    }
-}
-
-document.on('mousemove', e => {
-    rotation.final = MAXDEGREE * e.clientX / window.innerWidth
-    perspective.final = (e.clientY - window.innerHeight / 2)
-                        * 2 + BASEPERSPECTIVE
-
-    animation.play()
-})
-
-document.on('mouseover', () => {
-    $flyer.classList.add('js-disable-animation')
-    easing = BASEEASING
-
-    animation.play()
-})
-
-document.on('mouseleave', () => {
-    rotation.final = 0
-    perspective.final = BASEPERSPECTIVE
-    zoom.final = 1
-    easing = BASEEASING * 5
-
-    animation.play()
-})
-
-window.on('mousewheel, DOMMouseScroll', e => {
-    let wheelDistance = e.detail ? -e.detail / 3 : e.wheelDelta / 120
-
-    zoom.final += wheelDistance / 10
-    zoom.final = Math.min(Math.max(zoom.final, .25), 2)
-
-    animation.play()
-})
-
-document.on('click', () => {
-    zoom.final = 1
-
-    animation.play()
-})
+RxCSS({
+  mouse: Rx.Observable.interval(0, Rx.Scheduler.animationFrame)
+    .withLatestFrom(mouse$, (_, m) => m)
+    .scan(RxCSS.lerp(0.1))
+}, timeElm);
